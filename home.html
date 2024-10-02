@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            text-align: center;
+            background-color: #f8f8f8;
+            padding: 30px;
+            font-size: 36px; /* Enlarged heading */
+            font-weight: bold;
+        }
+        header {
+            position: relative;
+            text-align: center;
+            background-color: #f8f8f8;
+            padding: 30px;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .buy-btn {
+            position: absolute;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .buy-btn:hover {
+            background-color: #218838;
+        }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px; /* Increased padding for more space */
+            gap: 50px; /* Increased gap between containers */
+        }
+        .logo-item {
+            text-align: center;
+            cursor: pointer;
+            width: 150px;
+            transition: transform 0.2s ease;
+        }
+        .logo-item:hover {
+            transform: scale(1.05);
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+        .logo-name {
+            font-size: 18px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .logo-item {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        LIST OF ALL COLOR TRADING APPS 
+
+        <button class="buy-btn" onclick="location.href='buy.html'">Buy</button>
+    </header>
+
+    <div class="logo-container">
+        <div class="logo-item" onclick="location.href='hack.html'">
+            <img src="logo/download.jfif" alt="Logo 1">
+            <div class="logo-name">Logo 1</div>
+        </div>
+        <div class="logo-item" onclick="location.href='hack.html'">
+            <img src="logo/th.jfif" alt="Logo 2">
+            <div class="logo-name">Logo 2</div>
+        </div>
+        <div class="logo-item" onclick="location.href='hack.html'">
+            <img src="logo/th (5).jfif" alt="Logo 3">
+            <div class="logo-name">Logo 3</div>
+        </div>
+        <div class="logo-item" onclick="location.href='hack.html'">
+            <img src="logo/th (4).jfif" alt="Logo 1">
+            <div class="logo-name">Logo 1</div>
+        </div>
+        <div class="logo-item" onclick="location.href='hack.html'">
+            <img src="logo/th (3).jfif" alt="Logo 2">
+            <div class="logo-name">Logo 2</div>
+        </div>
+        <div class="logo-item" onclick="location.href='hack.html'">
+            <img src="logo/th (2).jfif" alt="Logo 3">
+            <div class="logo-name">Logo 3</div>
+        </div>
+        <div class="logo-item" onclick="location.href='hack.html'">
+            <img src="logo/th (1).jfif" alt="Logo 3">
+            <div class="logo-name">Logo 3</div>
+        </div>
+    </div>
+</body>
+</html>
