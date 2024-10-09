@@ -9,10 +9,16 @@
             margin: 0;
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        }
+
+        h2 {
+            color: red;
+            margin-bottom: 20px;
         }
 
         .container {
@@ -39,6 +45,12 @@
             border: 1px solid #ccc;
             font-size: 16px;
             box-sizing: border-box;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 5px;
         }
 
         .buttons {
@@ -92,8 +104,8 @@
 
         .popup-content input[type="text"] {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin: 10px 0;
             border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 16px;
@@ -142,28 +154,34 @@
     </style>
 </head>
 <body>
-  
+    <!-- Heading added outside the container -->
+    <h2>Hack Application</h2>
+
     <div class="container">
-        <h3>Last Period Number</h3>
-        <input type="text" placeholder="Enter 11 digits">
+        <h3>Last 3 Period Number</h3>
+        <input type="text" id="period-number" placeholder="Enter Last 3 digits">
 
-        <h3>Last Price</h3>
-        <input type="text" placeholder="Enter 5 digits">
+        <h3>Last last number</h3>
+        <input type="text" id="last-price" placeholder="Enter last number digits">
 
-        <h3>Last Result Number</h3>
-        <input type="text" placeholder="Enter 1 digit">
+        <h3>Last Result </h3>
+        <input type="text" id="result-number" placeholder="Enter Last result">
+
+        <div class="error" id="error-message"></div>
 
         <div class="buttons">
-            <button onclick="showPopup()">Calculate</button>
-            <button onclick="showPopup()">Reset</button>
+            <button onclick="calculate()">Calculate</button>
+            <button onclick="resetForm()">Reset</button>
+            <button onclick="showPopup()">Activate</button>
         </div>
     </div>
 
     <div class="popup" id="popup">
         <div class="popup-content">
-            <h4>PLEASE ENTER THE ACTIVATION CODE</h4>
-            <input type="text" placeholder="Enter Activation Code">
-            <button onclick="closePopup()">Submit</button>
+            <h4>Enter Activation Code</h4>
+            <input type="text" id="activation-code" placeholder="Enter activation code">
+            <button onclick="validateCode()">Submit</button>
+            <button onclick="closePopup()">Close</button>
         </div>
     </div>
 
@@ -174,6 +192,42 @@
 
         function closePopup() {
             document.getElementById("popup").style.display = "none";
+        }
+
+        function resetForm() {
+            document.getElementById('period-number').value = '';
+            document.getElementById('last-price').value = '';
+            document.getElementById('result-number').value = '';
+            document.getElementById('error-message').innerText = '';
+        }
+
+        function calculate() {
+            const periodNumber = document.getElementById('period-number').value;
+            const lastPrice = document.getElementById('last-price').value;
+            const resultNumber = document.getElementById('result-number').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (!periodNumber || !lastPrice || !resultNumber) {
+                errorMessage.innerText = "All fields are required.";
+                return;
+            }
+
+            errorMessage.innerText = '';
+
+            // Randomly select between 'Big' or 'Small'
+            const randomResult = Math.random() < 0.5 ? 'Big' : 'Small';
+
+            showPopup(randomResult);
+        }
+
+        function validateCode() {
+            const activationCode = document.getElementById('activation-code').value;
+            if (!activationCode) {
+                alert("Please enter the activation code.");
+            } else {
+                alert("Activation code accepted.");
+                closePopup();
+            }
         }
     </script>
 </body>
